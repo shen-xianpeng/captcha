@@ -11,6 +11,7 @@ import (
 	"image/png"
 	"io"
 	"math"
+	"math/rand"
 )
 
 const (
@@ -38,9 +39,8 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 
 	// Initialize PRNG.
 	m.rng.Seed(deriveSeed(imageSeedPurpose, id, digits))
-
-	m.Paletted = image.NewPaletted(image.Rect(0, 0, width, height), m.getRandomPalette())
 	m.calculateSizes(width, height, len(digits))
+
 	// Randomly position captcha inside the image.
 	maxx := width - (m.numWidth+m.dotSize)*len(digits) - m.dotSize
 	maxy := height - m.numHeight - m.dotSize*2
@@ -52,6 +52,9 @@ func NewImage(id string, digits []byte, width, height int) *Image {
 	}
 	x := m.rng.Int(border, maxx-border)
 	y := m.rng.Int(border, maxy-border)
+	x = 20 + rand.Intn(30)
+	m.Paletted = image.NewPaletted(image.Rect(0, 0, 160, 80), m.getRandomPalette())
+
 	// Draw digits.
 	for _, n := range digits {
 		m.drawDigit(font[n], x, y)
